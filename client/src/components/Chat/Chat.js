@@ -28,6 +28,7 @@ function Chat({location}) {
 
         //Join chatroom
         socket.emit('joinRoom', { name,room });
+        console.log(name);
 
         return () => {
             socket.emit('disconnect');
@@ -45,6 +46,7 @@ function Chat({location}) {
             // outputMessage(message);
             // //Scroll Down
             // chatMessages.scrollTop = chatMessages.scrollHeight;
+            console.log(message.username);
             setMessages([...messages,message]);
 
         })
@@ -55,7 +57,7 @@ function Chat({location}) {
         if(message) {
             socket.emit('chatMessage',message)
         }
-        console.log(message);
+        console.log(message.username);
     }
 
     console.log(message,messages);

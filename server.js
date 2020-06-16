@@ -22,6 +22,7 @@ const botName = "ChatCord bot";
     socket.on('joinRoom',({ name,room })=>{
 
         const user = userJoin(socket.id,name,room);
+        console.log(user.username)
 
         socket.join(user.room)
 
@@ -30,7 +31,7 @@ const botName = "ChatCord bot";
         socket.emit('message',formatMessage(botName,'Welcome to chatcord'));
 
         //Broadcast when a user connects
-        socket.broadcast.to(user.room).emit('message',formatMessage(botName,`${user.name} has joined the chat`));
+        socket.broadcast.to(user.room).emit('message',formatMessage(botName,`${user.username} has joined the chat`));
         //Send users and room info
         io.to(user.room).emit('roomUsers',{
             room: user.room,
@@ -44,8 +45,10 @@ const botName = "ChatCord bot";
     //Listen for chat message
     socket.on('chatMessage', msg => {
         const user = getCurrentUser(socket.id);
+        
 
-        io.to(user.room).emit('message',formatMessage(user.name,msg));
+        io.to(user.room).emit('message',formatMessage(user.username,msg));
+        console.log(user.name);
     })
 
     //Runs when the client disconnects
@@ -54,7 +57,7 @@ const botName = "ChatCord bot";
         const user = userLeave(socket.id);
 
         if(user){
-            io.to(user.room).emit('message',formatMessage(botName,`${user.name} has left the chat`));
+            io.to(user.room).emit('message',formatMessage(botName,`${user.username} has left the chat`));
         }
 
         io.to(user.room).emit('roomUsers',{
