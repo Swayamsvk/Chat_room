@@ -1,4 +1,4 @@
-const path = require('path');
+// const path = require('path');
 const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
@@ -11,17 +11,18 @@ const io = socketio(server);
 
 
 //Set static folder
-app.use(express.static(path.join(__dirname,'public')));
+// app.use(express.static(path.join(__dirname,'public')));
 
 const botName = "ChatCord bot";
 
 //Run When Client Connects
-io.on('connection',socket => {
+    io.on('connection',socket => {
     
     //Join Room
-    socket.on('joinRoom',({ username,room })=>{
+    socket.on('joinRoom',({ name,room })=>{
 
-        const user = userJoin(socket.id,username,room);
+        const user = userJoin(socket.id,name,room);
+        console.log(user.username)
 
         socket.join(user.room)
 
@@ -44,8 +45,10 @@ io.on('connection',socket => {
     //Listen for chat message
     socket.on('chatMessage', msg => {
         const user = getCurrentUser(socket.id);
+        
 
         io.to(user.room).emit('message',formatMessage(user.username,msg));
+        console.log(user.name);
     })
 
     //Runs when the client disconnects
@@ -67,6 +70,6 @@ io.on('connection',socket => {
 
 })
 
-const PORT = 3000 || process.env.PORT;
+const PORT = 3001 || process.env.PORT;
 
 server.listen(PORT, ()=> console.log(`Server is running on port ${PORT}`));
